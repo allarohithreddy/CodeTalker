@@ -365,3 +365,200 @@ HTML(f'<video width=600 controls><source src="{data_url}" type="video/mp4"></vid
 - Ensure that the Python version is correctly set to 3.8 throughout.
 - Make sure all dependencies are installed and GPU is enabled for faster rendering.
 - If any error occurs, refer to the error logs and ensure all necessary packages are installed.
+
+
+
+
+Here’s a detailed, step-by-step guide for running the project on a **local machine**, written for users without prior knowledge, and formatted for direct inclusion in a README file:
+
+---
+
+# **Step-by-Step Guide for Running the Speech-Driven 3D Facial Animation Project on a Local Machine**
+
+This guide provides detailed instructions to set up and execute the **CodeTalker: Speech-Driven 3D Facial Animation with Discrete Motion Prior** project on a local machine.
+
+---
+
+## **1. System Requirements**
+
+Before proceeding, ensure your system meets the following requirements:
+- **Operating System**: Linux, macOS, or Windows Subsystem for Linux (WSL).
+- **Python Version**: 3.8 (strictly required).
+- **GPU with CUDA Support** (optional but recommended for faster execution).
+
+---
+
+## **2. Step-by-Step Installation**
+
+### **Step 1: Install Python 3.8**
+
+If Python 3.8 is not already installed, follow these steps:
+
+#### On Ubuntu:
+```bash
+sudo apt-get update
+sudo apt-get install python3.8 python3.8-distutils python3.8-dev
+```
+
+#### On Windows (using WSL or standalone):
+1. Download Python 3.8 from the official [Python website](https://www.python.org/downloads/release/python-380/).
+2. Follow the installation instructions and ensure **pip** is included in the installation.
+
+#### On macOS:
+```bash
+brew install python@3.8
+```
+
+---
+
+### **Step 2: Set Python 3.8 as Default**
+
+Switch to Python 3.8 if multiple Python versions are installed:
+
+```bash
+sudo update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.8 1
+sudo update-alternatives --config python3
+```
+
+Verify the version:
+```bash
+python3 --version
+```
+
+---
+
+### **Step 3: Install System Libraries**
+
+Install required system libraries for OpenGL and rendering support:
+
+```bash
+sudo apt-get install libosmesa6-dev libgl1-mesa-dev libglfw3-dev libeigen3-dev mesa-utils libboost-dev python3-opengl
+```
+
+---
+
+### **Step 4: Install Python Dependencies**
+
+Install `pip` and use it to install Python libraries:
+
+```bash
+sudo apt-get install python3-pip
+pip install --upgrade pip
+pip install torch==1.11.0 torchvision==0.12.0 torchaudio==0.11.0
+pip install einops numpy librosa==0.8.1 tqdm trimesh==3.9.27 scipy==1.7.2 pyrender pyopengl==3.1.5 pyglet==1.5.27 opencv-python glfw transformers
+```
+
+---
+
+## **3. Download and Set Up the Project**
+
+### **Step 1: Clone the Repository**
+
+Clone the CodeTalker repository to your local machine:
+
+```bash
+git clone https://github.com/Doubiiu/CodeTalker.git
+cd CodeTalker
+```
+
+### **Step 2: Download Pretrained Models**
+
+Download the pretrained model weights and templates required for the VOCASET and BIWI datasets:
+
+```bash
+wget -O vocaset/FLAME_sample.ply https://github.com/TimoBolkart/voca/raw/master/template/FLAME_sample.ply
+gdown --id '1RszIMsxcWX7WPlaODqJvax8M_dnCIzk5' --output vocaset/vocaset_stage1.pth.tar
+gdown --id '1phqJ_6AqTJmMdSq-__KY6eVwN4J9iCGP' --output vocaset/vocaset_stage2.pth.tar
+gdown --id '1rN7pXRzfROwTMcBeOA7Qju6pqy2rxzUX' --output vocaset/templates.pkl
+gdown --id '1FSxey5Qug3MgAn69ymwFt8iuvwK6u37d' --output BIWI/biwi_stage1.pth.tar
+gdown --id '1gSNo9KYeIf6Mx3VYjRXQJBcg7Qv8UiUl' --output BIWI/biwi_stage2.pth.tar
+gdown --id '1Q2UnLwf0lg_TTYe9DdR3iJM2aSGF45th' --output BIWI/templates.pkl
+```
+
+---
+
+## **4. Running Pre-Built Demos**
+
+### **Step 1: VOCASET Demo**
+
+To generate and render a demo animation using the VOCASET dataset:
+
+```bash
+sh scripts/demo.sh vocaset
+```
+
+### **Step 2: BIWI Demo**
+
+To generate and render a demo animation using the BIWI dataset:
+
+```bash
+sh scripts/demo.sh BIWI
+```
+
+---
+
+## **5. Generate Custom Animations**
+
+### **Step 1: Prepare Your Audio File**
+
+1. Place your `.wav` file in the `demo/wav/` directory.
+2. Ensure the duration is around **10 seconds** for best results.
+
+### **Step 2: Modify the Configuration**
+
+Update the configuration file (`config/vocaset/demo.yaml` or `config/BIWI/demo.yaml`) with:
+- **Dataset**: Select VOCASET or BIWI.
+- **Style and Subject**: Choose from the predefined options.
+- **Audio File Path**: Set the path to your `.wav` file.
+
+Example snippet in `demo.yaml`:
+```yaml
+condition: FaceTalk_170725_00137_TA
+subject: FaceTalk_170809_00138_TA
+demo_wav_path: demo/wav/your_audio_file.wav
+```
+
+### **Step 3: Generate Animation**
+
+Run the following command to render the animation:
+
+```bash
+sh scripts/demo.sh <dataset_name>
+```
+
+Replace `<dataset_name>` with `vocaset` or `BIWI` as per your configuration.
+
+---
+
+## **6. Viewing Outputs**
+
+### **Step 1: Locate the Output**
+
+The rendered animation will be saved in the `demo/output/` directory.
+
+### **Step 2: Play the Video**
+
+You can view the video using any media player that supports `.mp4` files.
+
+```bash
+xdg-open demo/output/<generated_video>.mp4
+```
+
+---
+
+## **7. Troubleshooting**
+
+1. **Python Version Issues**:
+   - Ensure Python 3.8 is correctly installed and set as default.
+
+2. **Dependency Installation Errors**:
+   - Use `apt-get` to install missing system libraries.
+   - Use `pip install` to resolve Python library errors.
+
+3. **GPU Not Detected**:
+   - Check CUDA installation with `nvidia-smi`.
+
+4. **Rendering Issues**:
+   - Verify OpenGL compatibility by running `glxinfo | grep "OpenGL version"`.
+
+---
